@@ -1,0 +1,217 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Test</title>
+    <style type="text/css">
+      html, body { height: 100%; margin: 0; padding: 0; }
+      #map { height: 100%; }
+    </style>
+
+</head>
+<body>
+<div id="map"></div>
+<script type="text/javascript">
+    var map;
+    var elevator;
+    var poly;
+    var path = [];
+    var markers = [];
+    var myStyles = [
+        {
+            featureType: "poi",
+            elementType: "labels",
+            stylers: [
+                  { visibility: "off" }
+            ]
+        }
+    ];
+
+function initMap() {
+  map = new google.maps.Map(document.getElementById('map'), {
+      center: { lat: 49.235533, lng: 6.975715 },
+      zoom: 18,
+      styles: myStyles
+  });
+  elevator = new google.maps.ElevationService;
+
+  map.addListener('click', function (e) {
+      setMapOnAll(null);
+      markers = [];
+      placeMarkerAndPanTo(e.latLng);
+  });
+}
+
+function setMapOnAll(map) {
+    for (var i = 0; i < markers.length; i++) {
+        markers[i].setMap(map);
+    }
+}
+
+function placeMarkerAndPanTo(latLng) {
+    var image = 'marker_start.png'
+    var marker = new google.maps.Marker({
+        position: latLng,
+        animation: google.maps.Animation.DROP,
+        icon: image,
+        title: "Start",
+        map: map
+    });
+    map.panTo(latLng);
+    markers.push(marker);
+    setCoords();
+    getElevation(latLng);
+}
+function placePop(latLng) {
+    var image = 'marker.png'
+    var marker = new google.maps.Marker({
+        position: latLng,
+        animation: google.maps.Animation.DROP,
+        icon: image,
+        title: "Platzen des Ballons",
+        map: map
+    });
+    markers.push(marker);
+}
+function placeEnd(latLng, marker_num) {
+    var image = 'marker_end.png'
+
+    if (marker_num == 1) {
+        image = 'marker1.png'
+    }
+    if (marker_num == 2) {
+        image = 'marker2.png'
+    }
+    if (marker_num == 3) {
+        image = 'marker3.png'
+    }
+    if (marker_num == 4) {
+        image = 'marker4.png'
+    }
+    if (marker_num == 5) {
+        image = 'marker5.png'
+    }
+    if (marker_num == 6) {
+        image = 'marker1_2.png'
+    }
+    if (marker_num == 7) {
+        image = 'marker2_2.png'
+    }
+    if (marker_num == 8) {
+        image = 'marker3_2.png'
+    }
+    if (marker_num == 9) {
+        image = 'marker4_2.png'
+    }
+    if (marker_num == 10) {
+        image = 'marker5_2.png'
+    }
+    if (marker_num == 11) {
+        image = 'marker1_3.png'
+    }
+    if (marker_num == 12) {
+        image = 'marker2_3.png'
+    }
+    if (marker_num == 13) {
+        image = 'marker3_3.png'
+    }
+    if (marker_num == 14) {
+        image = 'marker4_3.png'
+    }
+    if (marker_num == 15) {
+        image = 'marker5_3.png'
+    }
+    if (marker_num == 16) {
+        image = 'marker1_4.png'
+    }
+    if (marker_num == 17) {
+        image = 'marker2_4.png'
+    }
+    if (marker_num == 18) {
+        image = 'marker3_4.png'
+    }
+    if (marker_num == 19) {
+        image = 'marker4_4.png'
+    }
+    if (marker_num == 20) {
+        image = 'marker5_4.png'
+    }
+
+    var marker = new google.maps.Marker({
+        position: latLng,
+        animation: google.maps.Animation.DROP,
+        icon: image,
+        title: "Landeposition",
+        map: map
+    });
+    markers.push(marker);
+}
+
+function setCoords(map) {
+    var lat = markers[0].getPosition().lat();
+    var lng = markers[0].getPosition().lng();
+    window.external.set_lat(lat);
+    window.external.set_lon(lng);
+}
+
+function setMarker(lat_1, lng_1) {
+    var positions = { lat: 1, lng: 1 };
+    setMapOnAll(null);
+    markers = [];
+    positions['lat'] = parseFloat(lat_1) / 10000000000000;
+    positions['lng'] = parseFloat(lng_1) / 10000000000000;
+    placeMarkerAndPanTo(positions);
+}
+function setPop(lat_1, lng_1) {
+    var positions = { lat: 1, lng: 1 };
+    positions['lat'] = parseFloat(lat_1) / 100000;
+    positions['lng'] = parseFloat(lng_1) / 100000;
+    placePop(positions);
+}
+function setEnd(lat_1, lng_1, marker_num) {
+    var positions = { lat: 1, lng: 1 };
+    positions['lat'] = parseFloat(lat_1) / 100000;
+    positions['lng'] = parseFloat(lng_1) / 100000;
+    placeEnd(positions, marker_num);
+}
+
+function getElevation(location) {
+    elevator.getElevationForLocations({
+        'locations': [location]
+    }, function (results, status) {
+        if (status === google.maps.ElevationStatus.OK) {
+            window.external.set_elevation(results[0].elevation);
+        } else {
+            window.alert('Elevation service failed due to: ' + status);
+        }
+    });
+
+}
+
+/*
+function add_point(data) {
+    entry = data.split(',');
+    var point = new google.maps.LatLng(parseFloat(entry[1]),
+                parseFloat(entry[2]));
+    path.push(point);
+
+    var path_polyline = new google.maps.Polyline({
+        path: path,
+        map: map,
+        strokeColor: '#000000',
+        strokeWeight: 3,
+        strokeOpacity: 0.75
+    });
+    return true;
+}
+*/
+
+</script>
+<script async defer
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAOprAPF4zA0ok_aKDz0-3RdfxYMKUbA0M&callback=initMap">
+</script>
+
+
+</body>
+</html>
